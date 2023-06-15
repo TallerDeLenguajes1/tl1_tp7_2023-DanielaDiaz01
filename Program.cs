@@ -1,71 +1,72 @@
 ﻿// See https://aka.ms/new-console-template for more information
 //Console.WriteLine("Hello, World!");
 
-using EspacioCalculadora;
+using EspacioEmpresa;
 
 
-//PUNTO 1
-internal class Program
-{
-    private static void Main(string[] args)
-    {
-        //Sin interfaz
-        //Calculadora calculadora = new Calculadora(10);
-        //calculadora.Sumar(5);
-        //calculadora.Multiplicar(2);
-        //double resultado = calculadora.Resultado;
-        //Console.WriteLine("El resultado es: " + resultado); //Salida: 30
-        
-        Console.WriteLine("\nCALCULADORA");
-        Console.WriteLine("\nSeleccione una opcion:");
+//PUNTO 2
+Empleado[] empleados = new Empleado[3];
 
-        int control=1;
-        while(control != 0){
-            Console.WriteLine("\n1_sumar 2_restar 3_multiplicar 4_dividir 5_limpiar 0_salir");
-            int.TryParse(Console.ReadLine(), out int operacion);
+//Cargue los datos para 3 empleados
+for (int i = 0; i < 3; i++){
+    Console.WriteLine("Empleado: ", i+1);
+    Empleado empleado = new Empleado();
 
-            Console.WriteLine("Ingrese valor1:");
-            float.TryParse(Console.ReadLine(), out float a);
-            Console.WriteLine("Ingrese valor2:");
-            float.TryParse(Console.ReadLine(), out float b);
+    Console.WriteLine("Nombre: ");
+    empleado.Nombre = Console.ReadLine();
 
-            Calculadora calculadora = new Calculadora(a);
+    Console.WriteLine("Apellido: ");
+    empleado.Apellido = Console.ReadLine();
 
-            //float resultado=0;
-            switch(operacion){
-                case 1: 
-                    calculadora.Sumar(b); 
-                    break;
+    Console.WriteLine("Fecha de nacimiento (dd/mm/aaaa): ");
+    empleado.FechaNacimiento = DateTime.ParseExact(Console.ReadLine(), "dd/MM/yyyy",null);
 
-                case 2: 
-                    calculadora.Restar(b);
-                    break;
+    Console.WriteLine("Estado civil soltero/a(S)/casado/a(C): ");
+    empleado.EstadoCivil = Console.ReadLine()[0];
 
-                case 3: 
-                    calculadora.Multiplicar(b);
-                    break;
+    Console.WriteLine("Genero masculino(M)/femenino(F): ");
+    empleado.Genero = Console.ReadLine()[0];
 
-                case 4: 
-                    calculadora.Dividir(b);
-                    break;
-                
-                case 5:
-                    calculadora.Limpiar();
-                    break;
+    Console.WriteLine("Sueldo basico: ");
+    empleado.SueldoBasico = double.Parse(Console.ReadLine());
 
-                default:
-                    Console.WriteLine("Operacion invalida, elija otra operacion");
-                    continue;
-            }
+    Console.WriteLine("Seleccione cargo: ");
+    Console.WriteLine("Auxiliar_0");
+    Console.WriteLine("Administrativo_1");
+    Console.WriteLine("Ingeniero_2");
+    Console.WriteLine("Especialista_3");
+    Console.WriteLine("Investigador_4");
+    empleado.Cargo = (Cargos)int.Parse(Console.ReadLine());
 
-            double resultado = calculadora.Resultado;
-            Console.WriteLine("Resultado: " + resultado);
+    empleados[i] = empleado;
 
-            Console.WriteLine("Desea Realizar otra operacion? 1_Si Enter_No");
-            if(!int.TryParse(Console.ReadLine(), out int opcion)){
-                control = 0;
-            }
-        }
-        Console.WriteLine("¡Gracias por usar la calculadora!");
+    Console.WriteLine();
+}
+
+//Monto Total de lo que se paga en concepto de Salarios
+double montoTotalSalarios = 0;
+foreach (Empleado empleado in empleados){
+    double salario = empleado.CalcularSalario();
+    montoTotalSalarios += salario;
+}
+
+Console.WriteLine("Monto Total de Salarios: $" + montoTotalSalarios);
+Console.WriteLine();
+
+//Empleado más próximo a jubilarse
+Empleado empleadoJubilacion = null;
+int añosFaltantesJubilacion = int.MaxValue;
+
+foreach (Empleado empleado in empleados){
+    int añosFaltantes = empleado.Genero == 'M' ? 65 - empleado.CalcularEdad() : 60 - empleado.CalcularEdad();
+    if (añosFaltantes < añosFaltantesJubilacion){
+        añosFaltantesJubilacion = añosFaltantes;
+        empleadoJubilacion = empleado;
     }
 }
+Console.WriteLine("Empleado más próximo a jubilarse:");
+Console.WriteLine("Nombre: " + empleadoJubilacion.Nombre);
+Console.WriteLine("Apellido: " + empleadoJubilacion.Apellido);
+Console.WriteLine("Edad: " + empleadoJubilacion.CalcularEdad());
+Console.ReadLine();
+
